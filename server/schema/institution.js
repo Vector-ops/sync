@@ -7,6 +7,13 @@ const institutionSchema = new Schema({
 		required: [true, "must provide institution name"],
 		trim: true,
 	},
+	email: {
+		type: String,
+		required: [true, "must provide email"],
+		trim: true,
+		unique: true,
+		lowercase: true,
+	},
 });
 
 module.exports = mongoose.model("Institution", institutionSchema);
