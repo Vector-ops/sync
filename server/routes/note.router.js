@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const {
-	getAllNotes,
+	getInstNotes,
 	createNotes,
 	getSingleNote,
 	updateNotes,
 	deleteNotes,
 } = require("../controllers/note.controller");
 
-router.route("/").get(getAllNotes).post(createNotes);
+router.route("/").get(getInstNotes);
+router.route("/").post(createNotes);
 
 router
 	.route("/:noteId")
