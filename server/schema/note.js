@@ -13,6 +13,11 @@ const notesSchema = new Schema(
 			required: true,
 			trim: true,
 		},
+		institution_id: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: "Institution",
+		},
 		title: {
 			type: String,
 			required: [true, "must provide title"],
