@@ -3,6 +3,7 @@ const router = express.Router();
 const {
 	getInstNotes,
 	createNotes,
+	getAuthorNotes,
 	getSingleNote,
 	updateNotes,
 	deleteNotes,
@@ -10,6 +11,7 @@ const {
 
 router.route("/").get(getInstNotes);
 router.route("/").post(createNotes);
+router.route("/author").get(getAuthorNotes);
 
 router
 	.route("/:noteId")
