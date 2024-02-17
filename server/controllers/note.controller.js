@@ -9,8 +9,22 @@ const getInstNotes = asyncWrapper(async (req, res) => {
 	const notes = await Note.find()
 		.where("institution_id")
 		.equals(user.ins_id)
-		.select("title body author");
-	res.status(200).json({ notes });
+		.select("title body author")
+		.sort({ createdAt: -1 });
+	res.status(200).json(notes);
+});
+
+const getAuthorNotes = asyncWrapper(async (req, res, next) => {
+	const userId = req.session.userId;
+	const notes = await Note.find()
+		.where("author_id")
+		.equals(userId)
+		.select("title body author")
+		.sort({ createdAt: -1 });
+	if (!notes) {
+		return next(createHttpError(404, `No notes found`));
+	}
+	res.status(200).json(notes);
 });
 
 const getSingleNote = asyncWrapper(async (req, res, next) => {
@@ -24,7 +38,7 @@ const getSingleNote = asyncWrapper(async (req, res, next) => {
 	if (user.ins_id !== notes.institution_id) {
 		return next(createHttpError(404, `No notes found`));
 	}
-	res.status(200).json({ notes });
+	res.status(200).json(notes);
 });
 
 const createNotes = asyncWrapper(async (req, res, next) => {
@@ -43,7 +57,7 @@ const createNotes = asyncWrapper(async (req, res, next) => {
 		title: title,
 		body: body,
 	});
-	res.status(201).json({ notes });
+	res.status(201).json(notes);
 });
 
 const updateNotes = asyncWrapper(async (req, res, next) => {
@@ -72,29 +86,38 @@ const updateNotes = asyncWrapper(async (req, res, next) => {
 	if (!notes) {
 		return next(createHttpError(404, `No notes with found`));
 	}
-	res.status(200).json({ notes });
+	res.status(200).json(notes);
 });
 
 const deleteNotes = asyncWrapper(async (req, res, next) => {
 	const noteId = req.params.noteId;
 	const userId = req.session.userId;
 	const user = await User.findById(userId).select("ins_id role");
-	if (user.role !== "admin")
+	if (user.role === "student")
 		return next(
 			createHttpError(401, `You are not authorized to delete notes`)
 		);
-	const notes = await Note.findOneAndDelete({
-		_id: noteId,
-		institution_id: user.ins_id,
-	});
-	if (!notes) {
-		return next(createHttpError(404, `No notes with title: ${noteTitle}`));
+
+	let deleteConditions = {};
+	if (user.role === "teacher") {
+		deleteConditions = {
+			_id: noteId,
+			institution_id: user.ins_id,
+			author_id: userId,
+		};
+	} else if (user.role === "admin") {
+		deleteConditions = {
+			_id: noteId,
+			institution_id: user.ins_id,
+		};
 	}
+	await Note.findOneAndDelete(deleteConditions);
 	res.sendStatus(200);
 });
 
 module.exports = {
 	getInstNotes,
+	getAuthorNotes,
 	getSingleNote,
 	createNotes,
 	updateNotes,
