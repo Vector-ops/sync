@@ -1,6 +1,6 @@
 const express = require("express");
 const connectDB = require("./db/connect");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const noteRoute = require("./routes/note.router");
 const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/error-handler");
@@ -9,6 +9,8 @@ const validateSession = require("./middleware/validateSession");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const authRouter = require("./routes/auth.router");
+const adminRouter = require("./routes/admin.router");
+const validateAdmin = require("./middleware/validateAdmin");
 
 const app = express();
 
@@ -39,6 +41,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/notes", validateSession, noteRoute);
+app.use("/api/v1/admin", validateSession, validateAdmin, adminRouter);
 app.use(notFound);
 app.use(errorHandler);
 
