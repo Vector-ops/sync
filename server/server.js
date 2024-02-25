@@ -37,7 +37,13 @@ app.use(
 );
 
 //middleware
-app.use(cors());
+app.use(
+	cors({
+		origin: "http://localhost:8080",
+		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+		credentials: true,
+	})
+);
 app.use(express.json());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/notes", validateSession, noteRoute);

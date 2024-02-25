@@ -1,0 +1,13 @@
+.app__header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	color: var(--primary-color);
+	padding: 1em;
+	border-bottom: 2px solid var(--lightgray-color);
+
+	h1 {
+		font-weight: bolder;
+	}
+}

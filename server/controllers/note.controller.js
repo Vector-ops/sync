@@ -10,7 +10,9 @@ const getInstNotes = asyncWrapper(async (req, res) => {
 		.where("institution_id")
 		.equals(user.ins_id)
 		.select("title body author")
-		.sort({ createdAt: -1 });
+		.sort({ createdAt: -1 })
+		.exec();
+	console.log(notes[3].updatedAt);
 	res.status(200).json(notes);
 });
 

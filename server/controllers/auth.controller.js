@@ -63,8 +63,18 @@ const loginUser = asyncWrapper(async (req, res, next) => {
 	if (!isMatch) {
 		return next(createHttpError.NotFound("Invalid credentials"));
 	}
+
+	const response = {
+		username: user.username,
+		first_name: user.first_name,
+		last_name: user.last_name,
+		email: user.email,
+		role: user.role,
+		institution: user.ins_id,
+	};
+
 	req.session.userId = user._id;
-	res.send(200).json(user);
+	res.status(200).json(response);
 });
 
 const logoutUser = asyncWrapper(async (req, res, next) => {
